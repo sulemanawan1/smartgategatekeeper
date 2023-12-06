@@ -112,7 +112,7 @@ class ResidentialEmergencyScreen extends GetView {
       padding: EdgeInsets.only(left: 24.w, right: 14.w, top: 15.h),
       child: SizedBox(
         width: 337.w,
-        height: 60.w,
+        height: 80.w,
         child: Card(
           shape: RoundedRectangleBorder(
             side: BorderSide(

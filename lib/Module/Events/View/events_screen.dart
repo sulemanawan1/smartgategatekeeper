@@ -6,8 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 import '../../../Constants/constants.dart';
+import '../../../Helpers/Date Helper/date_helper.dart';
 import '../../../Routes/set_routes.dart';
-import '../../../Widgets/Dialog Box Elipse Heading/dialog_box_elipse_heading.dart';
 import '../../../Widgets/Empty List/empty_list.dart';
 import '../../../Widgets/Loader/loader.dart';
 import '../../../Widgets/My Back Button/my_back_button.dart';
@@ -38,7 +38,6 @@ class EventsScreen extends GetView {
                             arguments: controller.userdata);
                       },
                     ),
-                    32.h.ph,
                     Expanded(
                       child: FutureBuilder<Event>(
                           future: controller.viewEventsApi(
@@ -57,27 +56,39 @@ class EventsScreen extends GetView {
                                           onTap: () {
                                             showDialog(
                                                 context: context,
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        AlertDialog(
-                                                          content: EventDialog(
-                                                              title: snapshot
+                                                builder: (BuildContext
+                                                        context) =>
+                                                    AlertDialog(
+                                                      content: EventDialog(
+                                                          startTime: snapshot
                                                                   .data!
                                                                   .data![index]
-                                                                  .title,
-                                                              startDate: snapshot
+                                                                  .starttime ??
+                                                              "",
+                                                          endTime: snapshot
                                                                   .data!
                                                                   .data![index]
-                                                                  .startdate,
-                                                              endDate: snapshot
+                                                                  .endtime ??
+                                                              "",
+                                                          title: snapshot
+                                                              .data!
+                                                              .data![index]
+                                                              .title,
+                                                          startDate: snapshot
                                                                   .data!
                                                                   .data![index]
-                                                                  .enddate,
-                                                              description: snapshot
+                                                                  .startdate ??
+                                                              "",
+                                                          endDate: snapshot
                                                                   .data!
                                                                   .data![index]
-                                                                  .description),
-                                                        ));
+                                                                  .enddate ??
+                                                              "",
+                                                          description: snapshot
+                                                              .data!
+                                                              .data![index]
+                                                              .description),
+                                                    ));
                                           },
                                           child: EventCard(
                                             title: controller.snapShot.title,
@@ -93,7 +104,7 @@ class EventsScreen extends GetView {
                                 return EmptyList(name: 'No Events');
                               }
                             } else if (snapshot.hasError) {
-                              return Loader();
+                              return Icon(Icons.error_outline);
                             } else {
                               return Loader();
                             }
@@ -113,13 +124,17 @@ class EventDialog extends StatelessWidget {
   final String? description;
   final String? startDate;
   final String? endDate;
+  final String? startTime;
+  final String? endTime;
 
   const EventDialog(
       {super.key,
       required this.title,
       required this.description,
       required this.startDate,
-      required this.endDate});
+      required this.endDate,
+      required this.startTime,
+      required this.endTime});
 
   @override
   Widget build(BuildContext context) {
@@ -127,46 +142,179 @@ class EventDialog extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Center(
+            child: Text("Event",
+                style: GoogleFonts.ubuntu(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18.sp,
+                    color: HexColor('#606470'))),
+          ),
+          14.h.ph,
+          Text(
+            'Title',
+            style: GoogleFonts.ubuntu(
+                color: HexColor('#4D4D4D'),
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500),
+          ),
+          4.h.ph,
           Text(title ?? "",
               style: GoogleFonts.ubuntu(
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                   fontSize: 14.sp,
                   color: HexColor('#606470'))),
-          12.h.ph,
+          14.h.ph,
+          Text(
+            'Description',
+            style: GoogleFonts.ubuntu(
+                color: HexColor('#4D4D4D'),
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500),
+          ),
+          4.h.ph,
           Text(description ?? "",
               style: GoogleFonts.ubuntu(
-                  fontSize: 11.sp, color: HexColor('#333333'))),
-          14.h.ph,
-          DialogBoxElipseHeading(
-            text: "Start Date",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14.sp,
+                  color: HexColor('#606470'))),
+          20.h.ph,
+          Row(
+            children: [
+              Text(
+                'From',
+                style: GoogleFonts.ubuntu(
+                    color: HexColor(
+                      '#4D4D4D',
+                    ),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400),
+              ),
+              82.w.pw,
+              Text(
+                'To',
+                style: GoogleFonts.ubuntu(
+                    color: HexColor(
+                      '#4D4D4D',
+                    ),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400),
+              ),
+            ],
           ),
-          8.95.h.ph,
-          Padding(
-            padding: EdgeInsets.only(left: 26.w),
-            child: EventDateCard(dateString: startDate),
+          10.h.ph,
+          Row(
+            children: [
+              SvgPicture.asset(
+                'assets/complaint_date.svg',
+                width: 17.w,
+                height: 17.w,
+                color: primaryColor,
+              ),
+              11.w.pw,
+              Text(
+                DateHelper.convertDateFormatToDayMonthYearDateFormat(
+                        startDate!) ??
+                    "",
+                style: GoogleFonts.ubuntu(
+                    color: HexColor(
+                      '#4D4D4D',
+                    ),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w300),
+              ),
+              11.w.pw,
+              SvgPicture.asset(
+                'assets/complaint_date.svg',
+                width: 17.w,
+                height: 17.w,
+                color: primaryColor,
+              ),
+              11.w.pw,
+              Text(
+                DateHelper.convertDateFormatToDayMonthYearDateFormat(
+                        endDate!) ??
+                    "",
+                style: GoogleFonts.ubuntu(
+                    color: HexColor(
+                      '#4D4D4D',
+                    ),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w300),
+              )
+            ],
           ),
-          14.h.ph,
-          DialogBoxElipseHeading(
-            text: "End Date",
+          20.h.ph,
+          Row(
+            children: [
+              Text(
+                'From',
+                style: GoogleFonts.ubuntu(
+                    color: HexColor(
+                      '#4D4D4D',
+                    ),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400),
+              ),
+              82.w.pw,
+              Text(
+                'To',
+                style: GoogleFonts.ubuntu(
+                    color: HexColor(
+                      '#4D4D4D',
+                    ),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400),
+              ),
+            ],
           ),
-          8.95.h.ph,
-          Padding(
-            padding: EdgeInsets.only(left: 26.w),
-            child: EventDateCard(dateString: endDate),
+          10.h.ph,
+          Row(
+            children: [
+              SvgPicture.asset(
+                'assets/clock.svg',
+                width: 17.w,
+                height: 17.w,
+                color: primaryColor,
+              ),
+              11.w.pw,
+              Text(
+                DateHelper.formatTimeToAMPM(startTime!) ?? "",
+                style: GoogleFonts.ubuntu(
+                    color: HexColor(
+                      '#4D4D4D',
+                    ),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w300),
+              ),
+              36.w.pw,
+              SvgPicture.asset(
+                'assets/clock.svg',
+                width: 17.w,
+                height: 17.w,
+                color: primaryColor,
+              ),
+              11.w.pw,
+              Text(
+                DateHelper.formatTimeToAMPM(endTime!) ?? "",
+                style: GoogleFonts.ubuntu(
+                    color: HexColor(
+                      '#4D4D4D',
+                    ),
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w300),
+              ),
+            ],
           ),
-          19.h.ph,
+          40.h.ph,
           Center(
             child: MyButton(
-              border: 4.r,
-              width: 67.w,
-              height: 22.w,
-              name: 'Ok',
+              width: 300.w,
+              name: 'OK',
               onPressed: () {
                 Get.back();
               },
             ),
           ),
-          14.h.ph,
         ],
       ),
     );
@@ -194,7 +342,8 @@ class EventDateCard extends StatelessWidget {
             height: 12.w,
           ),
           8.w.pw,
-          Text(convertDateFormatToDayMonthYearDateFormat(dateString!),
+          Text(
+              DateHelper.convertDateFormatToDayMonthYearDateFormat(dateString!),
               style: GoogleFonts.ubuntu(
                   fontWeight: FontWeight.w300,
                   fontSize: 10.sp,
@@ -280,8 +429,9 @@ class EventCard extends StatelessWidget {
                                     ),
                                     8.w.pw,
                                     Text(
-                                        convertDateFormatToDayMonthYearDateFormat(
-                                            startDate!),
+                                        DateHelper
+                                            .convertDateFormatToDayMonthYearDateFormat(
+                                                startDate!),
                                         style: GoogleFonts.ubuntu(
                                             fontWeight: FontWeight.w300,
                                             fontSize: 10.sp,

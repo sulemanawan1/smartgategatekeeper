@@ -21,23 +21,23 @@ class NoticeBoardController extends GetxController {
   }
 
   viewNoticeBoardApi(int subadminid, String token) async {
-    final response = await Http.get(
-      Uri.parse(Api.viewallnoticesapi + "/" + subadminid.toString()),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': "Bearer $token"
-      },
-    );
-    var data = jsonDecode(response.body.toString());
-
     try {
+      final response = await Http.get(
+        Uri.parse(Api.viewallnoticesapi + "/" + subadminid.toString()),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': "Bearer $token"
+        },
+      );
+      var data = jsonDecode(response.body.toString());
+
       if (response.statusCode == 200) {
         return NoticeBoardModel.fromJson(data);
       } else {
-        myToast(msg: 'Something Went Wrong', isNegative: true);
+        throw Exception('Failed to Load Data.');
       }
     } catch (e) {
-      myToast(msg: 'Something Went Wrong', isNegative: true);
+      myToast(msg: 'Something Went Wrong');
     }
   }
 }
